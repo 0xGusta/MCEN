@@ -24,7 +24,7 @@ export default function AboutModal({ isOpen, onClose, onConfirm, forceConfirm = 
                             You may be banned or have messages deleted from the chat if you violate the terms of use, such as sending spam, illegal, or offensive content. The MonChat team reserves the right to ban users who do not respect the community guidelines.
                         </p>
                         <p>
-                            MonChat is an open-source project. You can view the source code on <a href="https://github.com/0xGusta/MonChatReact" target="_blank" rel="noopener noreferrer">GitHub</a>. The contract code can be viewed on <a href="https://testnet.monadexplorer.com/address/0xA625578F0C4E3c1d367D87e17157b5c7dD056e9F?tab=Contract" target="_blank" rel="noopener noreferrer">MonVision</a>.
+                            MonChat is an open-source project. You can view the source code on <a href="https://github.com/0xGusta/MCEN" target="_blank" rel="noopener noreferrer">GitHub</a>. The contract code can be viewed on <a href="https://testnet.monadexplorer.com/address/0xA625578F0C4E3c1d367D87e17157b5c7dD056e9F?tab=Contract" target="_blank" rel="noopener noreferrer">MonVision</a>.
                         </p>
                         <p className="text-gray-400">
                             Remember: By interacting here, you are aware that everything you send will be recorded on the Blockchain.
