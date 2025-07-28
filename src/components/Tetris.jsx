@@ -5,7 +5,7 @@ import { getSyncedNow } from '../utils/timeSync';
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
 const GAME_DURATION = 180;
-const OPPONENT_TIMEOUT = 5000;
+const OPPONENT_TIMEOUT = 10000;
 
 const isMobile = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -90,7 +90,7 @@ export default function Tetris({ sessionId, myAddress, players }) {
     
     const endGame = useCallback((reason) => {
         if (gameEnded) return;
-        console.log(`End game: ${reason}`);
+        console.log(`FIM DE JOGO ACIONADO: ${reason}`);
 
         setGameEnded(true);
         setGameSpeed(null);
@@ -130,7 +130,7 @@ export default function Tetris({ sessionId, myAddress, players }) {
 
         if (opponentData && opponentData.timestamp > lastOpponentTimestampRef.current) {
             if(lastMessageReceivedAtRef.current === 0) {
-                console.log("First message received from opponent");
+                console.log("Primeira mensagem do oponente recebida.");
             }
             lastMessageReceivedAtRef.current = getSyncedNow();
             lastOpponentTimestampRef.current = opponentData.timestamp;
@@ -144,7 +144,7 @@ export default function Tetris({ sessionId, myAddress, players }) {
             }
             
             if (opponentData.gameEnded && !gameEnded) {
-                endGame("Oponent ended the game");
+                endGame("Oponente terminou o jogo");
             }
         }
     }, [sharedState, gameEnded, opponentGameOver, endGame]);
@@ -156,7 +156,7 @@ export default function Tetris({ sessionId, myAddress, players }) {
             setTimeLeft(prevTime => {
                 if (prevTime <= 1) {
                     clearInterval(timer);
-                    endGame("Time's up!");
+                    endGame("Tempo esgotado");
                     return 0;
                 }
                 return prevTime - 1;
@@ -175,7 +175,7 @@ export default function Tetris({ sessionId, myAddress, players }) {
                 const timeSinceLastUpdate = getSyncedNow() - lastMessageReceivedAtRef.current;
                 
                 if (timeSinceLastUpdate > OPPONENT_TIMEOUT) {
-                    console.log(`abandon detected: Last message ${timeSinceLastUpdate}ms`);
+                    console.log(`ABANDONO DETECTADO: Última mensagem há ${timeSinceLastUpdate}ms`);
                     setOpponentAbandoned(true);
                     clearInterval(interval);
                 }
@@ -187,9 +187,9 @@ export default function Tetris({ sessionId, myAddress, players }) {
 
     useEffect(() => {
         if (!gameEnded) {
-            if (gameOver) endGame("Game Over local player");
-            else if (opponentGameOver) endGame("Game Over opponent");
-            else if (opponentAbandoned) endGame("Opponent abandoned");
+            if (gameOver) endGame("Game Over do jogador local");
+            else if (opponentGameOver) endGame("Game Over do oponente");
+            else if (opponentAbandoned) endGame("Oponente abandonou");
         }
     }, [gameOver, opponentGameOver, opponentAbandoned, gameEnded, endGame]);
         
@@ -214,14 +214,16 @@ export default function Tetris({ sessionId, myAddress, players }) {
     
     const resetPlayer = useCallback(() => {
         const newTetromino = nextTetromino || getRandomTetromino(pieceSeed);
-        setPieceSeed(prev => prev + 1);
-        const newNextTetromino = getRandomTetromino(pieceSeed + 1);
-        setNextTetromino(newNextTetromino);
+        const nextPieceSeed = pieceSeed + 1;
+        const newNextTetromino = getRandomTetromino(nextPieceSeed);
+
         setPlayer({
             pos: { x: Math.floor(BOARD_WIDTH / 2) - 1, y: 0 },
             tetromino: newTetromino,
             collided: false,
         });
+        setNextTetromino(newNextTetromino);
+        setPieceSeed(nextPieceSeed);
     }, [nextTetromino, pieceSeed]);
     
     useEffect(() => {
@@ -316,9 +318,11 @@ export default function Tetris({ sessionId, myAddress, players }) {
                     }
                 });
             });
+
             let linesCleared = 0;
             const clearedBoard = newBoard.filter(row => !row.every(cell => cell[0] !== 0));
             linesCleared = BOARD_HEIGHT - clearedBoard.length;
+
             if (linesCleared > 0) {
                 const newLines = Array.from({ length: linesCleared }, () => Array(BOARD_WIDTH).fill([0, '#000000']));
                 setBoard([...newLines, ...clearedBoard]);
@@ -326,9 +330,9 @@ export default function Tetris({ sessionId, myAddress, players }) {
             } else {
                 setBoard(newBoard);
             }
-            resetPlayer();
+            setPlayer(prev => ({ ...prev, tetromino: null }));
         }
-    }, [player.collided, board, player.tetromino, player.pos.x, player.pos.y, resetPlayer]);
+    }, [player.collided, board, player.tetromino, player.pos.x, player.pos.y, setScore]);
     
     useGameLoop(() => {
         if (!gameOver && !gameEnded) {
