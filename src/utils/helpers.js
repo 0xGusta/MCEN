@@ -9,7 +9,7 @@ export const getFriendlyErrorMessage = (error) => {
     if (error.code === 'INSUFFICIENT_FUNDS') {
         return 'You do not have enough funds to complete this transaction.';
     }
-    return 'An unexpected error occurred while processing the transaction. Please try again later.';
+    return 'An unexpected error occurred while processing the transaction. If the error persists, reload the page.';
 };
 
 export const truncateAddress = (address) => {
