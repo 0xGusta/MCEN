@@ -5,7 +5,7 @@ import { getSyncedNow } from '../utils/timeSync';
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
 const GAME_DURATION = 180;
-const OPPONENT_TIMEOUT = 10000;
+const OPPONENT_TIMEOUT = 5000;
 
 const isMobile = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -49,7 +49,7 @@ const useGameLoop = (callback, speed) => {
 };
 
 export default function Tetris({ sessionId, myAddress, players }) {
-    const mySeed = parseInt(myAddress.slice(2, 10), 16);
+    const mySeed = getSyncedNow() + parseInt(myAddress.slice(2, 10), 16);
     
     const [blockSize, setBlockSize] = useState(20);
     const [board, setBoard] = useState(createEmptyBoard());
@@ -142,12 +142,8 @@ export default function Tetris({ sessionId, myAddress, players }) {
             if (opponentData.gameOver && !opponentGameOver) {
                 setOpponentGameOver(true);
             }
-            
-            if (opponentData.gameEnded && !gameEnded) {
-                endGame("Oponente terminou o jogo");
-            }
         }
-    }, [sharedState, gameEnded, opponentGameOver, endGame]);
+    }, [sharedState, gameEnded, opponentGameOver]);
 
     useEffect(() => {
         if (gameEnded) return;
