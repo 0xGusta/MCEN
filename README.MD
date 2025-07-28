@@ -55,7 +55,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 4.  **Run the development server:**
     ```sh
-    pnpm dev
+    pnpm run dev
     ```
     The application will be available at `http://localhost:5173` (or another port if 5173 is in use).
 
